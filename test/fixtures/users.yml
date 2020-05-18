@@ -1,0 +1,15 @@
+users_001:
+  name: Name_1
+  balance: 200.01
+
+users_002:
+  name: Name_2
+  balance: 100
+
+users_003:
+  name: Name_3
+  balance: 50
+
+users_004:
+  name: Name_4
+  balance: 0
