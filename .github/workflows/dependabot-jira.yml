@@ -31,6 +31,14 @@ jobs:
       - name: Label PR as security
         if: ${{ env.SECURITY_PR == 'true' }}
         run: |
+          echo "Adding 'security' label to Dependabot PR"
+          gh issue edit ${{ github.event.pull_request.number }} --add-label "security"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Jira issue for security update
+        if: ${{ env.SECURITY_PR == 'true' }}
+        run: |
           SUMMARY="Dependabot - ${{ github.event.pull_request.title }}"
           DESCRIPTION="## Description\n${{ github.event.pull_request.html_url }}"
           JIRA_PROJECT_KEY="BCT"
