@@ -13,6 +13,8 @@ updates:
       - randsina
     assignees:
       - randsina
+    commit-message:
+      prefix: "Security Update"
   - package-ecosystem: bundler
     directory: /
     schedule:
