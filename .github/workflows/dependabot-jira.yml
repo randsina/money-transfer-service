@@ -1,0 +1,53 @@
+name: Dependabot Jira Automation
+on:
+  pull_request:
+    types: [opened]
+
+permissions:
+  pull-requests: write   # allow editing PR (e.g., adding labels)
+
+jobs:
+  create_jira_issue:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: Check if this is a security update
+        id: security_check
+        run: |
+          PR_CONTENT="${{ github.event.pull_request.title }} ${{ github.event.pull_request.body }}"
+          if echo "$PR_CONTENT" | grep -qi -e "CVE-" -e "GHSA" -e "security"; then
+            echo "SECURITY_PR=true" >> $GITHUB_ENV
+          else
+            echo "SECURITY_PR=false" >> $GITHUB_ENV
+          fi
+
+      - name: Label PR as security
+        if: ${{ env.SECURITY_PR == 'true' }}
+        run: |
+          echo "Adding 'security' label to Dependabot PR"
+          gh issue edit ${{ github.event.pull_request.number }} --add-label "security"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Jira issue for security update
+        if: ${{ env.SECURITY_PR == 'true' }}
+        run: |
+          SUMMARY="Dependabot - ${{ github.event.pull_request.title }}"
+          DESCRIPTION="## Description\n${{ github.event.pull_request.body }}\n\n---\n**GitHub PR**: ${{ github.event.pull_request.html_url }}"
+          JIRA_PROJECT_KEY="BCT"
+          
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -u "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
+            -d "{
+                  \"fields\": {
+                    \"project\": {
+                      \"key\": \"${JIRA_PROJECT_KEY}\"
+                    },
+                    \"summary\": \"${SUMMARY}\",
+                    \"issuetype\": { \"name\": \"Task\" },
+                    \"labels\": [\"vulnerability\"],
+                    \"description\": \"${DESCRIPTION}\"
+                  }
+                }" \
+            "${{ secrets.JIRA_BASE_URL }}/rest/api/2/issue"

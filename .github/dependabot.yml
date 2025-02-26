@@ -1,24 +1,10 @@
 version: 2
 updates:
   - package-ecosystem: bundler
-    directory: /
+    directory: "/"
     schedule:
-      interval: daily
-    # Disable version updates for bundler dependencies
-    open-pull-requests-limit: 0
-    labels:
-      - security
-    reviewers:
-      - randsina
-    assignees:
-      - randsina
-    commit-message:
-      prefix: "Security Update"
-  - package-ecosystem: bundler
-    directory: /
-    schedule:
-      interval: daily
-    open-pull-requests-limit: 5
+      interval: weekly
+    open-pull-requests-limit: 3
     target-branch: release
     reviewers:
       - randsina
