@@ -32,7 +32,7 @@ jobs:
         if: ${{ env.SECURITY_PR == 'true' }}
         run: |
           SUMMARY="Dependabot - ${{ github.event.pull_request.title }}"
-          DESCRIPTION="## Description\n${{ github.event.pull_request.body }}"
+          DESCRIPTION="## Description\n${{ github.event.pull_request.html_url }}"
           JIRA_PROJECT_KEY="BCT"
 
           curl -X POST \
