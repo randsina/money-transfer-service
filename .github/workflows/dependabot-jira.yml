@@ -14,8 +14,12 @@ jobs:
       - name: Check if this is a security update
         id: security_check
         run: |
-          PR_CONTENT="${{ github.event.pull_request.title }} ${{ github.event.pull_request.body }}"
-          if echo "$PR_CONTENT" | grep -qi -e "CVE-" -e "GHSA" -e "security"; then
+          # Write the PR title and body into a temporary file
+          echo "${{ github.event.pull_request.title }}" > pr_content.txt
+          echo "${{ github.event.pull_request.body }}" >> pr_content.txt
+
+          # Search the file for security keywords
+          if grep -qi -e "CVE-" -e "GHSA" -e "security" pr_content.txt; then
             echo "SECURITY_PR=true" >> $GITHUB_ENV
           else
             echo "SECURITY_PR=false" >> $GITHUB_ENV
