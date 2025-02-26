@@ -1,7 +1,7 @@
 name: Dependabot Jira Automation
 on:
   pull_request:
-    types: [opened]
+    types: [opened, reopened]
 
 permissions:
   pull-requests: write   # allow editing PR (e.g., adding labels)
