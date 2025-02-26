@@ -38,10 +38,6 @@ jobs:
 
       - name: Create Jira issue for security update
         if: ${{ env.SECURITY_PR == 'true' }}
-        env:
-          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
-          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
         run: |
           SUMMARY="Dependabot - ${{ github.event.pull_request.title }}"
           DESCRIPTION="## Description\n${{ github.event.pull_request.html_url }}"
@@ -49,7 +45,7 @@ jobs:
 
           curl -X POST \
             -H "Content-Type: application/json" \
-            -u "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
+            -u "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
             -d "{
                   \"fields\": {
                     \"project\": {
@@ -61,4 +57,4 @@ jobs:
                     \"description\": \"${DESCRIPTION}\"
                   }
                 }" \
-            "${JIRA_BASE_URL}/rest/api/2/issue"
+            "${{ secrets.JIRA_BASE_URL }}/rest/api/2/issue"
